@@ -4,10 +4,10 @@ import pickle
 import sys
 
 ######################### CONSTANTS #########################
-READ_COLS       = 61
+READ_COLS       = 60
 COL_NAMES       = ["ch{0:02d}".format(i) for i in range(READ_COLS)]
 
-MAINBRANCH_LIST = ["mainbranch_MW039.csv", "mainbranch_MW038.csv"] ## filename to read (change as appropriate)
+MAINBRANCH_LIST = ["mainbranch_0_0_0.csv"] ## filename to read (change as appropriate)
 RANGE_MIN       = "1e+7"
 RANGE_MAX       = "1e+18"
 ## Specify the column number of  parameters to be extract as a list.
@@ -22,7 +22,7 @@ PICKLE_NAME += ".pickle"
 
 class GetTreeInfo:
     """
-    Get some information of .tree file
+    Get some information of mainbranch.
     """
     def __init__(self, df):
         self.df         = df
@@ -84,9 +84,10 @@ if __name__ == "__main__":
     for param_key in PARAM_NAME_LIST:
         param[param_key] = {}
         for m_key in MAINBRANCH_LIST:
-            param[param_key][m_key] = getTreeInfoDict[m_key].getInfo(param_dict[param_key])
+            param[param_key][m_key] = getTreeInfoDict[m_key].getParam(param_dict[param_key])
 
     ## Extract Mvir(z=0) of all haloes to get use_idx_dict.
+    use_idx_dict = None
     if "Mvir" in PARAM_NAME_LIST:
         mvir_z0 = {}
         for m_key in MAINBRANCH_LIST:
@@ -106,27 +107,28 @@ if __name__ == "__main__":
 
     ## Extract a host halo.
     host_param = {}
-    for param_key in PARAM_NAME_LIST:
-        host_param[param_key] = {}
-        for m_key in MAINBRANCH_LIST:
-            host_param[param_key][m_key] = np.array(param[param_key][m_key][0])
+    for m_key in MAINBRANCH_LIST:
+        host_param[m_key] = {}
+        for p_key in PARAM_NAME_LIST:
+            host_param[m_key][p_key] = np.array(param[param_key][m_key][0])
 
-    with open("host_param" + PICKLE_NAME[:-7] + "_" + m_str[:-1] + ".pickle", mode = "wb") as f:
+    with open("host_param.pickle", mode = "wb") as f:
         pickle.dump(host_param, f)
 
-    ## Extract using haloes as param_use_idx.
-    param_use_idx = {}
-    for p_key in PARAM_NAME_LIST:
-        param_use_idx[p_key] = {}
-        for m_key in MAINBRANCH_LIST:
-            param_use_idx[p_key][m_key] = []
-            for use_idx in use_idx_dict[m_key]:
-                if use_idx == 0: continue
-                param_use_idx[p_key][m_key].append(np.array(param[p_key][m_key][use_idx]))
-            #print("{}({}) : {}".format(p_key, m_key, len(param_use_idx[p_key][m_key])))
+    ## Extract sub haloes.
+    sub_param = {}
+    for m_key in MAINBRANCH_LIST:
+        sub_param[m_key] = {}
+        for p_key in PARAM_NAME_LIST:
+            sub_param[m_key][p_key] = []
+            if use_idx_dict is not None:
+                for use_idx in use_idx_dict[m_key]:
+                    if use_idx == 0: continue
+                    sub_param[m_key][p_key].append(np.array(param[p_key][m_key][use_idx]))
+            else:
+                for idx, sub_p in enumerate(param[p_key][m_key]):
+                    if idx == 0: continue
+                    sub_param[m_key][p_key].append(np.array(sub_p))
 
-    with open("param" + PICKLE_NAME[:-7] + "_" + m_str[:-1] + ".pickle", mode = "wb") as f:
-        pickle.dump(param_use_idx, f)
-
-    with open("../param_list.txt", mode = "a") as f:
-        f.writelines("param" + PICKLE_NAME[:-7] + "_" + m_str[:-1] + ".pickle" + "\n")
+    with open("sub_param.pickle", mode = "wb") as f:
+        pickle.dump(sub_param, f)
