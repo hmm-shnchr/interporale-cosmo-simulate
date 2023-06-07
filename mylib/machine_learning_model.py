@@ -31,7 +31,7 @@ class MachineLearningModel:
 
 
     def __init_weight(self, w_init):
-        ##Input layers.
+        ## Initialize input layer's weight.
         for dim in range(1, self.input_dim+1):
             if w_init == "he":
                 scale = np.sqrt(2.0 / self.input_size)
@@ -47,7 +47,7 @@ class MachineLearningModel:
                 self.params["Gamma_input{}".format(dim)]    = np.ones(self.hidden[0])
                 self.params["Beta_input{}".format(dim)]     = np.zeros(self.hidden[0])
 
-        ##Hidden layers.
+        ## Initialize hidden layer's weight.
         for i in range(1, len(self.hidden)):
             if w_init == "he":
                 scale = np.sqrt(2.0 / self.hidden[i-1])
@@ -63,7 +63,7 @@ class MachineLearningModel:
                 self.params["Gamma{}".format(i)]    = np.ones(self.hidden[i])
                 self.params["Beta{}".format(i)]     = np.zeros(self.hidden[i])
 
-        ##Output layers.
+        ## Initialize output layer's weight.
         for dim in range(1, self.output_dim+1):
             if w_init == "he":
                 scale = np.sqrt(2.0 / self.hidden[-1])
@@ -79,13 +79,13 @@ class MachineLearningModel:
                 self.params["Gamma_output{}".format(dim)]   = np.ones(self.output_size)
                 self.params["Beta_output{}".format(dim)]    = np.zeros(self.output_size)
 
-        ##Set data type.
+        ## Set data type.
         for key in self.params.keys():
             self.params[key] = self.params[key].astype(self.dtype)
 
 
     def __init_layers(self):
-        ##Input layers.
+        ## Make input layers.
         for dim in range(1, self.input_dim+1):
             self.input_layers[dim]                                      = OrderedDict()
             self.input_layers[dim]["Affine_input{}".format(dim)]        = Affine(self.params["Weight_input{}".format(dim)], self.params["Bias_input{}".format(dim)])
@@ -93,14 +93,14 @@ class MachineLearningModel:
                 self.input_layers[dim]["BatchNorm_input{}".format(dim)] = BatchNormalization(self.params["Gamma_input{}".format(dim)], self.params["Beta_input{}".format(dim)])
             self.input_layers[dim]["Activation_input{}".format(dim)]    = activation_function(self.act_func)
 
-        ##Hidden layers.
+        ## Make hidden layers.
         for i in range(1, len(self.hidden)):
             self.layers["Affine{}".format(i)]           = Affine(self.params["Weight{}".format(i)], self.params["Bias{}".format(i)])
             if self.batch_norm:
                 self.layers["BatchNorm{}".format(i)]    = BatchNormalization(self.params["Gamma{}".format(i)], self.params["Beta{}".format(i)])
             self.layers["Activation{}".format(i)]       = activation_function(self.act_func)
 
-        ##Output layers.
+        ## Make output layers.
         for dim in range(1, self.output_dim+1):
             self.output_layers[dim]                                         = OrderedDict()
             self.output_layers[dim]["Affine_output{}".format(dim)]          = Affine(self.params["Weight_output{}".format(dim)], self.params["Bias_output{}".format(dim)])
@@ -110,12 +110,12 @@ class MachineLearningModel:
                 self.output_layers[dim]["Activation_output{}".format(dim)]  = Identity()
             else:
                 self.output_layers[dim]["Activation_output{}".format(dim)]  = activation_function(self.act_func)
-            ##Loss layers.
+            ## Make loss layers.
             self.loss_layers[dim]                                           = loss_function(self.loss_func)
 
 
     def predict(self, x, is_training):
-        ##Forward in input layers.
+        ## Forwarding in input layers.
         out = 0
         for dim in range(1, self.input_dim+1):
             for layer_name, layer in self.input_layers[dim].items():
@@ -126,11 +126,11 @@ class MachineLearningModel:
             out += out_
         out /= self.input_dim
 
-        ##Forward in hidden layers.
+        ## Forwarding in hidden layers.
         for layer in self.layers.values():
             out = layer.forward(out, is_training)
 
-        ##Forward in output layers.
+        ## Forwarding in output layers.
         out_list = []
         for dim in range(1, self.output_dim+1):
             for layer_name, layer in self.output_layers[dim].items():
@@ -186,30 +186,30 @@ class MachineLearningModel:
 
 
     def gradient(self, x, t, is_training = True):
-        ##Forward.
+        ## Forwarding.
         self.loss(x, t, is_training)
 
-        ##Backward from lastlayer to output layer.
+        ## Backwarding from lastlayer to output layer.
         dout = 0.0
         for dim in range(1, self.output_dim+1):
-            dout_ = self.loss_layers[dim].backward(dout = 1.0)
-            layers = list(self.output_layers[dim].values())
+            dout_   = self.loss_layers[dim].backward(dout = 1.0)
+            layers  = list(self.output_layers[dim].values())
             layers.reverse()
             for layer in layers:
                 dout_ = layer.backward(dout_)
-            dout += dout_
+            dout    += dout_
 
-        ##Backward in hidden layers.
-        layers = list(self.layers.values())
+        ## Backwarding in hidden layers.
+        layers  = list(self.layers.values())
         layers.reverse()
         for layer in layers:
             dout = layer.backward(dout)
 
-        dout /= self.input_dim
-        ##Backward in input layers.
+        dout    /= self.input_dim
+        ## Backwarding in input layers.
         for dim in range(1, self.input_dim+1):
-            layers = list(self.input_layers[dim].values())
-            keys = list(self.input_layers[dim].keys())
+            layers  = list(self.input_layers[dim].values())
+            keys    = list(self.input_layers[dim].keys())
             layers.reverse()
             keys.reverse()
             for key, layer in zip(keys, layers):
@@ -218,8 +218,8 @@ class MachineLearningModel:
                 else:
                     dout_ = layer.backward(dout_)
 
-        ##Get gradients of self.params.
-        ##Input layers.
+        ## Get gradients of self.params.
+        ## Input layers.
         grads = {}
         for dim in range(1, self.input_dim+1):
             grads["Weight_input{}".format(dim)]     = self.input_layers[dim]["Affine_input{}".format(dim)].dW
@@ -228,7 +228,7 @@ class MachineLearningModel:
                 grads["Gamma_input{}".format(dim)]  = self.input_layers[dim]["BatchNorm_input{}".format(dim)].dgamma
                 grads["Beta_input{}".format(dim)]   = self.input_layers[dim]["BatchNorm_input{}".format(dim)].dbeta
 
-        ##Hidden layers.
+        ## Hidden layers.
         for i in range(1, len(self.hidden)):
             grads["Weight{}".format(i)]     = self.layers["Affine{}".format(i)].dW
             grads["Bias{}".format(i)]       = self.layers["Affine{}".format(i)].db
@@ -236,7 +236,7 @@ class MachineLearningModel:
                 grads["Gamma{}".format(i)]  = self.layers["BatchNorm{}".format(i)].dgamma
                 grads["Beta{}".format(i)]   = self.layers["BatchNorm{}".format(i)].dbeta
 
-        ##Output layers.
+        ## Output layers.
         for dim in range(1, self.output_dim+1):
             grads["Weight_output{}".format(dim)]    = self.output_layers[dim]["Affine_output{}".format(dim)].dW
             grads["Bias_output{}".format(dim)]      = self.output_layers[dim]["Affine_output{}".format(dim)].db
@@ -256,7 +256,7 @@ class MachineLearningModel:
 
 
     def numerical_gradient(self, x, t):
-        ##For debugging the backpropagation implement.
+        ## For debugging the backpropagation.
         loss_W  =lambda W: self.loss(x, t, is_training = True)
         grads   = {}
         for key, param in self.params.items():

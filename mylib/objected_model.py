@@ -16,30 +16,30 @@ class Model:
                  output_size, output_dim, lastlayer_identity,
                  loss_func, weight_decay, decay_lambda, split_epoch,
                  acc_func = "RelativeError", dtype = np.float32, BATCH_SIZE_MAX = 20000):
-        self.input_size, self.input_dim = input_size, input_dim
-        self.hidden, self.act_func, self.weight_init = hidden, act_func, weight_init
-        self.batch_norm, self.batch_norm_output = batch_norm, batch_norm_output
-        self.output_size, self.output_dim = output_size, output_dim
-        self.lastlayer_identity = lastlayer_identity
-        self.loss_func = loss_func
-        self.weight_decay, self.decay_lambda = weight_decay, decay_lambda
-        self.acc_func = acc_func
-        self.dtype = dtype
-        self.batch_max = BATCH_SIZE_MAX
-        self.batch_size = 100
-        self.norm_format = None
-        self.Norm_input = None
-        self.Norm_output = None
-        self.model = {}
-        self.threshold = None
-        self.optimizer = None
-        self.loss_val = {}
-        self.train_acc, self.test_acc = {}, {}
-        self.param_to_dim_input = None
-        self.param_to_dim_output = None
-        self.is_acc_test = None
-        self.split_epoch = split_epoch
-        self.iter_nums = None
+        self.input_size, self.input_dim                 = input_size, input_dim
+        self.hidden, self.act_func, self.weight_init    = hidden, act_func, weight_init
+        self.batch_norm, self.batch_norm_output         = batch_norm, batch_norm_output
+        self.output_size, self.output_dim               = output_size, output_dim
+        self.lastlayer_identity                         = lastlayer_identity
+        self.loss_func                                  = loss_func
+        self.weight_decay, self.decay_lambda            = weight_decay, decay_lambda
+        self.acc_func                                   = acc_func
+        self.dtype                                      = dtype
+        self.batch_max                                  = BATCH_SIZE_MAX
+        self.batch_size                                 = 100
+        self.norm_format                                = None
+        self.Norm_input                                 = None
+        self.Norm_output                                = None
+        self.model                                      = {}
+        self.threshold                                  = None
+        self.optimizer                                  = None
+        self.loss_val                                   = {}
+        self.train_acc, self.test_acc                   = {}, {}
+        self.param_to_dim_input                         = None
+        self.param_to_dim_output                        = None
+        self.is_acc_test                                = None
+        self.split_epoch                                = split_epoch
+        self.model_num                                  = None
 
 
     def __div_dataset(self, x = None, y = None, z = None):
@@ -61,8 +61,8 @@ class Model:
             abs_z = np.abs(z)
             abs_z = np.min(abs_z, axis = 1)
 
-        abs_array = np.empty((rowsize, colsize))
-        add_col = 0
+        abs_array   = np.empty((rowsize, colsize))
+        add_col     = 0
         if x is not None:
             abs_array[:, add_col] = abs_x
             add_col += 1
@@ -92,10 +92,10 @@ class Model:
                  batch_size, epoch,
                  norm_format, threshold = 0.03,
                  is_acc_test = True, is_acc_batch = True):
-        self.is_acc_test = is_acc_test
-        self.is_acc_batch = is_acc_batch
-        self.threshold = threshold
-        self.batch_size = batch_size
+        self.is_acc_test    = is_acc_test
+        self.is_acc_batch   = is_acc_batch
+        self.threshold      = threshold
+        self.batch_size     = batch_size
 
         print("Divide training dataset...")
         train_indices = {}
@@ -111,65 +111,67 @@ class Model:
         input_z = _test_input[param_to_dim_input["z"]] if "z" in param_to_dim_input.keys() else None
         test_indices[0], test_indices[1] = self.__div_dataset(x = input_x, y = input_y, z = input_z)
 
-        train_input, train_output = {}, {}
-        test_input, test_output = {}, {}
-        iter_nums = []
+        train_input, train_output   = {}, {}
+        test_input, test_output     = {}, {}
+        model_num                   = []
         for num in range(2):
-            if len(train_indices[num]) == 0 and len(test_indices[num]) == 0:
+            ## Upper threshold or lower threshold.
+            if len(train_indices[num]) == 0 or len(test_indices[num]) == 0:
+                ## Dataset is empty.
                 continue
-            train_input[num] = _train_input[:, train_indices[num]]
-            train_output[num] = _train_output[:, train_indices[num]]
-            test_input[num] = _test_input[:, test_indices[num]]
-            test_output[num] = _test_output[:, test_indices[num]]
-            iter_nums.append(num)
+            train_input[num]    = _train_input[:, train_indices[num]]
+            train_output[num]   = _train_output[:, train_indices[num]]
+            test_input[num]     = _test_input[:, test_indices[num]]
+            test_output[num]    = _test_output[:, test_indices[num]]
+            model_num.append(num)
 
-        self.norm_format = norm_format
-        Norm_input = {}
+        ## Normalize datasets.
+        self.norm_format    = norm_format
+        Norm_input          = {}
         for key, dim in param_to_dim_input.items():
-            if key in ["ScaleFactor"]:
-                continue
+            if key in ["ScaleFactor"]:  continue
             Norm_input[key] = {}
             print("\n-----Input parameter : {0}-----".format(key))
-            for num in iter_nums:
-                Norm_input[key][num] = Normalization(self.norm_format)
-                train_input[num][dim, ...] = Norm_input[key][num].run(train_input[num][dim, ...])
+            for num in model_num:
+                Norm_input[key][num]            = Normalization(self.norm_format)
+                train_input[num][dim, ...]      = Norm_input[key][num].run(train_input[num][dim, ...])
                 if is_acc_test:
-                    test_input[num][dim, ...] = Norm_input[key][num].run_predict(test_input[num][dim, ...])
+                    test_input[num][dim, ...]   = Norm_input[key][num].run_predict(test_input[num][dim, ...])
 
-        Norm_output = {}
+        Norm_output         = {}
         for key, dim in param_to_dim_output.items():
-            if key in ["ScaleFactor"]:
-                continue
+            if key in ["ScaleFactor"]:  continue
             Norm_output[key] = {}
             print("\n-----Output parameter : {0}-----".format(key))
-            for num in iter_nums:
-                Norm_output[key][num] = Normalization(self.norm_format)
-                train_output[num][dim, ...] = Norm_output[key][num].run(train_output[num][dim, ...])
+            for num in model_num:
+                Norm_output[key][num]           = Normalization(self.norm_format)
+                train_output[num][dim, ...]     = Norm_output[key][num].run(train_output[num][dim, ...])
                 if is_acc_test:
-                    test_output[num][dim, ...] = Norm_output[key][num].run_predict(test_output[num][dim, ...])
+                    test_output[num][dim, ...]  = Norm_output[key][num].run_predict(test_output[num][dim, ...])
 
-        self.Norm_input = Norm_input
-        self.Norm_output = Norm_output
-        optimizer = {}
+        self.Norm_input     = Norm_input
+        self.Norm_output    = Norm_output
+        optimizer           = {}
 
-        for num in iter_nums:
+        ## Start learning.
+        for num in model_num:
             print("\n-----start learning of the model : {0}-----".format(num))
             print("train_input.shape : {0}".format(train_input[num].shape))
             print("train_output.shape : {0}".format(train_output[num].shape))
             print("test_input.shape : {0}".format(test_input[num].shape))
             print("test_output.shape : {0}".format(test_output[num].shape))
-            rowsize_train = train_input[num].shape[1]
-            batch_mask_arange = np.arange(rowsize_train)
-            batch_size = int(rowsize_train / self.batch_size)
-            iter_per_epoch = int(rowsize_train / batch_size)
-            iter_num = iter_per_epoch * epoch
+            rowsize_train       = train_input[num].shape[1]
+            batch_mask_arange   = np.arange(rowsize_train)
+            batch_size          = int(rowsize_train / self.batch_size)
+            iter_per_epoch      = int(rowsize_train / batch_size)
+            iter_num            = iter_per_epoch * epoch
             print("\nBatch size : {}\nIterations per 1epoch : {}\nIterations : {}\nEpoch : {}".format(batch_size, iter_per_epoch, iter_num, epoch))
 
             self.model[num] = MachineLearningModel(self.input_size, self.input_dim,
                                                    self.hidden, self.act_func, self.weight_init, self.batch_norm, self.batch_norm_output,
                                                    self.output_size, self.output_dim, self.lastlayer_identity,
                                                    self.loss_func, self.weight_decay, self.decay_lambda)
-            optimizer[num] = set_optimizer(opt, float(lr))
+            optimizer[num]  = set_optimizer(opt, float(lr))
 
             train_batch = None
             if train_input[num].shape[1] > self.batch_max:
@@ -188,27 +190,26 @@ class Model:
                     test_batch = int(self.batch_max / 10)
 
             for key in param_to_dim_output.keys():
-                self.loss_val[key + str(num)] = []
-                self.train_acc[key + str(num)] = []
+                self.loss_val[key + str(num)]       = []
+                self.train_acc[key + str(num)]      = []
                 if is_acc_test:
-                    self.test_acc[key + str(num)] = []
+                    self.test_acc[key + str(num)]   = []
 
             for i in tqdm(range(iter_num)):
-                batch_mask = np.random.choice(batch_mask_arange, batch_size)
-                batch_input = train_input[num][:, batch_mask]
-                batch_output = train_output[num][:, batch_mask]
+                batch_mask          = np.random.choice(batch_mask_arange, batch_size)
+                batch_input         = train_input[num][:, batch_mask]
+                batch_output        = train_output[num][:, batch_mask]
                 if LP.use_cupy:
-                    batch_input = cupy.asarray(batch_input)
-                    batch_output = cupy.asarray(batch_output)
+                    batch_input     = cupy.asarray(batch_input)
+                    batch_output    = cupy.asarray(batch_output)
 
-                grads = self.model[num].gradient(batch_input, batch_output, is_training = True)
-                model_params = self.model[num].params
+                grads           = self.model[num].gradient(batch_input, batch_output, is_training = True)
+                model_params    = self.model[num].params
                 optimizer[num].update(model_params, grads)
                 if i % (iter_per_epoch * self.split_epoch) == 0:
                     loss = self.model[num].loss(batch_input, batch_output, is_training = False)
 
                     if LP.use_cupy:
-                        ##use cupy
                         loss = cupy.asnumpy(loss)
                         if train_batch is None:
                             train_acc = self.model[num].accuracy(cupy.asarray(train_input[num]),
@@ -217,10 +218,10 @@ class Model:
                         else:
                             train_acc = 0.0
                             for j in range(len(train_batch) - 1):
-                                batch_input = cupy.asarray(train_input[num][:, train_batch[j]:train_batch[j+1]])
-                                batch_output = cupy.asarray(train_output[num][:, train_batch[j]:train_batch[j+1]])
-                                train_acc += self.model[num].accuracy(batch_input, batch_output,
-                                                                      acc_func = self.acc_func, is_training = False)
+                                batch_input     = cupy.asarray(train_input[num][:, train_batch[j]:train_batch[j+1]])
+                                batch_output    = cupy.asarray(train_output[num][:, train_batch[j]:train_batch[j+1]])
+                                train_acc       += self.model[num].accuracy(batch_input, batch_output,
+                                                                            acc_func = self.acc_func, is_training = False)
                             train_acc /= len(train_batch) - 1
                         train_acc = cupy.asnumpy(train_acc)
 
@@ -232,19 +233,18 @@ class Model:
                             elif is_acc_batch == False:
                                 test_acc = 0.0
                                 for j in range(len(test_batch) - 1):
-                                    batch_input = cupy.asarray(test_input[num][:, test_batch[j]:test_batch[j+1]])
-                                    batch_output = cupy.asarray(test_output[num][:, test_batch[j]:test_batch[j+1]])
+                                    batch_input     = cupy.asarray(test_input[num][:, test_batch[j]:test_batch[j+1]])
+                                    batch_output    = cupy.asarray(test_output[num][:, test_batch[j]:test_batch[j+1]])
                                 test_acc /= len(test_batch) - 1
                             else:
-                                batch_mask = np.random.choice(np.arange(test_input[num].shape[1]), test_batch)
-                                batch_input = cupy.asarray(test_input[num][:, batch_mask])
-                                batch_output = cupy.asarray(test_output[num][:, batch_mask])
-                                test_acc = self.model[num].accuracy(batch_input, batch_output,
-                                                                    acc_func = self.acc_func, is_training = False)
+                                batch_mask      = np.random.choice(np.arange(test_input[num].shape[1]), test_batch)
+                                batch_input     = cupy.asarray(test_input[num][:, batch_mask])
+                                batch_output    = cupy.asarray(test_output[num][:, batch_mask])
+                                test_acc        = self.model[num].accuracy(batch_input, batch_output,
+                                                                           acc_func = self.acc_func, is_training = False)
                             test_acc = cupy.asnumpy(test_acc)
 
                     else:
-                        ##not use cupy
                         train_acc = self.model[num].accuracy(train_input[num], train_output[num],
                                                              acc_func = self.acc_func, is_training = False)
                         if is_acc_test:
@@ -256,13 +256,11 @@ class Model:
                         self.train_acc[p_key + str(num)].append(train_acc[dim])
                         if is_acc_test:
                             self.test_acc[p_key + str(num)].append(test_acc[dim])
-                        else:
-                            pass
 
-        self.optimizer = optimizer
-        self.param_to_dim_input = param_to_dim_input
-        self.param_to_dim_output = param_to_dim_output
-        self.iter_nums = iter_nums
+        self.optimizer              = optimizer
+        self.param_to_dim_input     = param_to_dim_input
+        self.param_to_dim_output    = param_to_dim_output
+        self.model_num              = model_num
 
 
     def predict(self, _data_input):
@@ -272,17 +270,16 @@ class Model:
         input_z = _data_input[self.param_to_dim_input["z"]] if "z" in self.param_to_dim_input.keys() else None
         data_indices[0], data_indices[1] = self.__div_dataset(x = input_x, y = input_y, z = input_z)
         data_input = {}
-        for num in self.iter_nums:
+        for num in self.model_num:
             data_input[num] = _data_input[:, data_indices[num]]
 
         for key, dim in self.param_to_dim_input.items():
-            if key in ["ScaleFactor"]:
-                continue
-            for num in self.iter_nums:
+            if key in ["ScaleFactor"]:  continue
+            for num in self.model_num:
                 data_input[num][dim, ...] = self.Norm_input[key][num].run_predict(data_input[num][dim, ...])
 
         data_predict = {}
-        for num in self.iter_nums:
+        for num in self.model_num:
             batch_input = None
             if data_input[num].shape[1] > self.batch_max:
                 batch_input = np.arange(0, data_input[num].shape[1], self.batch_max).tolist()
@@ -290,16 +287,15 @@ class Model:
                     batch_input.append(data_input[num].shape[1])
 
             if LP.use_cupy:
-                ##use cupy
                 if batch_input is None:
                     data_predict[num] = self.model[num].predict(cupy.asarray(data_input[num]),
                                                                 is_training = False)
                 else:
                     data_predict[num] = None
                     for j in range(len(batch_input) - 1):
-                        batch_data_input = cupy.asarray(data_input[num][:, batch_input[j]:batch_input[j+1]])
-                        predict = self.model[num].predict(batch_data_input,
-                                                          is_training = False)
+                        batch_data_input    = cupy.asarray(data_input[num][:, batch_input[j]:batch_input[j+1]])
+                        predict             = self.model[num].predict(batch_data_input,
+                                                                      is_training = False)
                         predict = cupy.asnumpy(predict)
                         if data_predict[num] is None:
                             data_predict[num] = predict
@@ -308,7 +304,6 @@ class Model:
                 data_predict[num] = cupy.asnumpy(data_predict[num])
 
             else:
-                ##not use cupy
                 if batch_input is None:
                     data_predict[num] = self.model[num].predict(data_input[num],
                                                                 is_training = False)
@@ -327,15 +322,15 @@ class Model:
                 data_predict[num][dim, ...] = self.Norm_output[key][num].inv_run_predict(data_predict[num][dim, ...])
 
         rowsize = 0
-        for num in self.iter_nums:
+        for num in self.model_num:
             rowsize += data_predict[num].shape[1]
 
-        if not len(self.iter_nums) == 1:
+        if not len(self.model_num) == 1:
             return_predict = np.empty((data_predict[0].shape[0], rowsize, data_predict[0].shape[2]))
-            for num in self.iter_nums:
+            for num in self.model_num:
                 return_predict[:, data_indices[num]] = data_predict[num]
         else:
-            return_predict = data_predict[self.iter_nums[0]]
+            return_predict = data_predict[self.model_num[0]]
 
         return return_predict
 
@@ -345,11 +340,11 @@ class Model:
                      length_major = 20, length_minor = 13,
                      linewidth = 2.5, figsize = (8, 5)):
 
-        ##plot loss function
-        for num in self.iter_nums:
-            plt_label = "_under_threshold" if num == 0 else "_upper_threthold"
-            fig = plt.figure(figsize = figsize)
-            ax_loss = fig.add_subplot(111)
+        ## Plot loss function.
+        for num in self.model_num:
+            plt_label   = "_under_threshold" if num == 0 else "_upper_threthold"
+            fig         = plt.figure(figsize = figsize)
+            ax_loss     = fig.add_subplot(111)
             for p_key in self.param_to_dim_output.keys():
                 epochs = np.arange(len(self.loss_val[p_key + str(num)])) * self.split_epoch
                 ax_loss.plot(epochs[1:], self.loss_val[p_key + str(num)][1:], label = "Loss Function", linewidth = linewidth)
@@ -365,13 +360,13 @@ class Model:
             plt.tight_layout()
             plt.savefig("{}fig_loss{}".format(save_dir, save_fig_type))
 
-        ##plot accuracy
+        ## Plot accuracy
         for p_key in self.param_to_dim_output.keys():
-            for num in self.iter_nums:
-                plt_label = "_under_threshold" if num == 0 else "_upper_threshold"
-                epochs = np.arange(len(self.train_acc[p_key + str(num)])) * self.split_epoch
-                fig = plt.figure(figsize = figsize)
-                ax_acc = fig.add_subplot(111)
+            for num in self.model_num:
+                plt_label   = "_under_threshold" if num == 0 else "_upper_threshold"
+                epochs      = np.arange(len(self.train_acc[p_key + str(num)])) * self.split_epoch
+                fig         = plt.figure(figsize = figsize)
+                ax_acc      = fig.add_subplot(111)
                 ax_acc.plot(epochs[1:], self.train_acc[p_key + str(num)][1:], label = "Training Dataset", linewidth = linewidth, color = "orange")
                 if self.is_acc_test:
                     ax_acc.plot(epochs[1:], self.test_acc[p_key + str(num)][1:], label = "Testing Dataset", linewidth = linewidth, color = "blue")
