@@ -2,11 +2,11 @@ import matplotlib.pyplot as plt
 
 
 def plot_scale_vs_data(origin, model, scalefactor, method, p_key, method_key,
-                       figsize = (10, 6), loc = "upper left",
-                       linewidth = 2.5, fontsize = 26, labelsize = 15, direction = "in",
-                       origin_c = "orange", pred_c = "blue",
-                       origin_m = "o", pred_m = "s", origin_size = 300, pred_size = 200, inputp_size = 300,
-                       legend_scale = 0.5):
+                       figsize=(10, 6), loc="upper left",
+                       linewidth=2.5, fontsize=26, labelsize=15, direction="in",
+                       origin_c="orange", pred_c="blue",
+                       origin_m="o", pred_m="s", origin_size=300, pred_size=200, inputp_size=300,
+                       legend_scale=0.5):
 
     if method_key not in ["linear", "cubic", "spline", "hermite"]:
         print("{method_key} is not supported.".format(method_key=method_key))
