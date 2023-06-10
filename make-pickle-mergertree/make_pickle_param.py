@@ -7,8 +7,9 @@ import sys
 READ_COLS       = 60
 COL_NAMES       = ["ch{0:02d}".format(i) for i in range(READ_COLS)]
 
+BOXSIZE         = 70 ## cosmological N-body simulation's box size(Mpc/h)
 MAINBRANCH_LIST = ["mainbranch_0_0_0.csv"] ## filename to read (change as appropriate)
-RANGE_MIN       = "1e+7"
+RANGE_MIN       = "1e+1"
 RANGE_MAX       = "1e+18"
 ## Specify the column number of  parameters to be extract as a list.
 ## See MergerTree about the correspondence between column number and parameter.
@@ -79,12 +80,12 @@ if __name__ == "__main__":
     ## Extract the specified parameters by param_dict.
     getTreeInfoDict = {}
     param           = {}
-    for key in MAINBRANCH_LIST:
-        getTreeInfoDict[key] = GetTreeInfo(df_dict[key])
-    for param_key in PARAM_NAME_LIST:
-        param[param_key] = {}
+    for m_key in MAINBRANCH_LIST:
+        getTreeInfoDict[key] = GetTreeInfo(df_dict[m_key])
+    for p_key in PARAM_NAME_LIST:
+        param[p_key] = {}
         for m_key in MAINBRANCH_LIST:
-            param[param_key][m_key] = getTreeInfoDict[m_key].getParam(param_dict[param_key])
+            param[p_key][m_key] = getTreeInfoDict[m_key].getParam(param_dict[p_key])
 
     ## Extract Mvir(z=0) of all haloes to get use_idx_dict.
     use_idx_dict = None
@@ -110,7 +111,7 @@ if __name__ == "__main__":
     for m_key in MAINBRANCH_LIST:
         host_param[m_key] = {}
         for p_key in PARAM_NAME_LIST:
-            host_param[m_key][p_key] = np.array(param[param_key][m_key][0])
+            host_param[m_key][p_key] = np.array(param[p_key][m_key][0])
 
     with open("host_param.pickle", mode = "wb") as f:
         pickle.dump(host_param, f)
@@ -129,6 +130,16 @@ if __name__ == "__main__":
                 for idx, sub_p in enumerate(param[p_key][m_key]):
                     if idx == 0: continue
                     sub_param[m_key][p_key].append(np.array(sub_p))
+            if p_key in ["x", "y", "z"]:
+                for idx, xyz in enumerate(sub_param[m_key][p_key]):
+                    ## Make sub halo coordinates relative to the host halo.
+                    host_start_i = -len(xyz)
+                    xyz -= host_param[m_key][p_key][host_start_i:]
+                    mask_1 = xyz < -BOXSIZE/2
+                    mask_2 = xyz > BOXSIZE/2
+                    xyz[mask_1] += BOXSIZE
+                    xyz[mask_2] -= BOXSIZE
+                    sub_param[m_key][p_key][idx] = xyz
 
     with open("sub_param.pickle", mode = "wb") as f:
         pickle.dump(sub_param, f)
