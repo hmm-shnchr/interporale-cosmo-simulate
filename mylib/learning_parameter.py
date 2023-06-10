@@ -47,8 +47,8 @@ class LearnParam:
         self.weight_init                = "he"
         self.lastlayer_identity         = True
         self.EPOCH                      = 1000
-        self.INPUT_SIZE                 = 3
-        self.OUTPUT_SIZE                = 1
+        self.INPUT_SIZE                 = 2
+        self.OUTPUT_SIZE                = 3
         self.normalize_format           = "Standardization"
         self.learn_dataset_format       = "shift"
         self.predict_dataset_format     = "equal_spaced"
