@@ -11,7 +11,7 @@ if __name__ == "__main__":
     LP = LearnParam()
     save_dir = get_save_dir(LP)
     if os.path.isdir(save_dir):
-        print("\nWarning!!!\nDirectory \"{0}\" is an existing directory.\nIt will be overwritten.".format(save_dir))
+        print("\nWarning!!!\nDirectory \"{save_dir}\" is an existing directory.\nIt will be overwritten.".format(save_dir=save_dir))
         print("1. Continue.\n2. Exit.")
         while True:
             cont = int(input(">> "))
