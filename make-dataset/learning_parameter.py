@@ -6,13 +6,15 @@ class LearnParam:
     """
 
     def __init__(self):
+        ## Simulation's box-size(Mpc/h)
+        self.box_size               = 70
         self.train_mvir_threshold   = "1e+8"
         self.test_mvir_threshold    = "1e+7"
-        self.extract_user_params    = ["ScaleFactor", "Mvir", "Rvir", "x", "vx", "host_Rvir"]
+        self.extract_use_params     = ["ScaleFactor", "Mvir", "Rvir", "x", "vx", "host_Rvir"]
         self.use_param_input        = ["x", "vx", "Mvir"]
         self.use_param_output       = ["x"]
-        self.input_size             = 3
-        self.output_size            = 1
+        self.input_size             = 2
+        self.output_size            = 3
         ## "shift" or "equal_cpaced" can be specified for
         ## self.learn_dataset_format and self.predict_dataset_format
         self.learn_dataset_format   = "shift"
