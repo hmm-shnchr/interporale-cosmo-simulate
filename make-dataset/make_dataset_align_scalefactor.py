@@ -91,8 +91,6 @@ if __name__ == "__main__":
     print("Loading datasets...")
     host_param          = {}
     sub_param           = {}
-    #dname_train_datas   = "../pickle_high_mass_resolution/"
-    #dname_test_datas    = "../pickle_low_mass_resolution/"
     dname_train_datas   = "../make-pickle-mergertree/sample-params/"
     dname_test_datas    = "../make-pickle-mergertree/sample-params/"
     with open(dname_train_datas + "host_param.pickle", mode = "rb") as f:
@@ -130,7 +128,7 @@ if __name__ == "__main__":
     for set_type in sets:
         mainbranch[set_type]        = list(sub_param[set_type].keys())
         parameter[set_type]         = list(sub_param[set_type][mainbranch[set_type][0]].keys())
-        print("===== parameter[{set_type} =====]".format(set_type=set_type))
+        print("===== parameter[{set_type}] =====".format(set_type=set_type))
         print(parameter[set_type])
         scalefactor_acc[set_type]   = {}
         for m_key in mainbranch[set_type]:
@@ -162,7 +160,7 @@ if __name__ == "__main__":
         _dataset[set_type] = extract_dataset(mainbranch[set_type], parameter[set_type],
                                              host_param[set_type], sub_param[set_type],
                                              LP.extract_dataset, scalefactor_acc[set_type],
-                                             LP.input_size, LP.output_size, threshold)
+                                             LP.input_size, LP.output_size, threshold, LP.box_size)
 
     _exclude_parameter  = ["ID", "pid", "upid"]
     exclude_parameter   = []
@@ -190,15 +188,13 @@ if __name__ == "__main__":
     for dim, p_key in enumerate(parameter):
         param_to_dim[p_key] = dim
     use_parameter   = LP.use_param_input
-    _use_parameter  = use_parameter
-    if "ScaleFactor"    not in _use_parameter: _use_parameter.append("ScaleFactor")
-    if "host_Rvir"      not in _use_parameter: _use_parameter.append("host_Rvir")
+    if "ScaleFactor" in use_parameter:  use_parameter.remove("ScaleFactor")
+    if "host_Rvir" in use_parameter:  use_parameter.remove("host_Rvir")
     print("use_parameter : {0}".format(use_parameter))
     use_parameter_indices = []
-    for p_key in _use_parameter:
+    for p_key in use_parameter + ["ScaleFactor", "host_Rvir"]:
         use_parameter_indices.append(param_to_dim[p_key])
     print("use_parameter_indices : {0}".format(use_parameter_indices))
-    print(use_parameter)
 
     ## Extract  dimensions of use parameters.
     print("Extract using dimensions...")

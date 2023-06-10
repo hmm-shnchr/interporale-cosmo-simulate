@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def extract_dataset(mainbranch, parameter, host_param, sub_param, ext_data, acc_sf, input_size, output_size, threshold):
+def extract_dataset(mainbranch, parameter, host_param, sub_param, ext_data, acc_sf, input_size, output_size, threshold, box_size):
     dataset = {}
     for m_key in mainbranch:
         dataset[m_key] = {}
@@ -23,7 +23,7 @@ def extract_dataset(mainbranch, parameter, host_param, sub_param, ext_data, acc_
                             start_i -= add_size
 
                 ## Extract parameter.
-                if p_key == "Mvir":
+                if p_key in ["Mvir"]:
                     data = np.log(p[start_i:] / p[acc_sf[m_key][idx]])
                 else:
                     data = p[start_i:]
