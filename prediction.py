@@ -239,9 +239,9 @@ if __name__ == "__main__":
 
     for p_key in LP.use_param_output:
         interpolate[p_key] = {}
-        print("-----predict {0}-----".format(p_key))
+        print("-----predict {p_key}-----".format(p_key=p_key))
         for met_key in methods:
-            print("---{0}---".format(met_key))
+            print("---{met_key}---".format(met_key=met_key))
             if met_key == "origin":
                 data_input  = test_input[param_to_dim_input[p_key]]
                 data_output = test_output[param_to_dim_output[p_key]]
