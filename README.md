@@ -1,4 +1,2 @@
 # interporale-cosmo-simulate
-Interpolating Cosmological-NBody-Simulation using Machine-Learning.
-
-push test(2).
+Interpolating Cosmological-N-Body-Simulation between times in a Machine-Learning-Model(MLModel). Use existing MergerTree of simulation data as a dataset for training the MLModel. Halo and subhalos are identified by Rockstar[Behroozi et al. 2013](https://ui.adsabs.harvard.edu/abs/2013ApJ...762..109B/abstract). Consistent tree[Behroozi et al. 2013](http://adsabs.harvard.edu/abs/2013ApJ...763...18B) is used for MergerTree construction.
