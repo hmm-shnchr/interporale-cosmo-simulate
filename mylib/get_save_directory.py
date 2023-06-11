@@ -8,6 +8,7 @@ def get_save_dir(LP):
     for param in LP.use_param_output:
         dirname += param + "_"
     dirname += str(len(LP.hidden)) + "layers_" + str(LP.hidden[0]) + "neurons_"
+    dirname += LP.activation_func + "_"
     if LP.batch_normalization:
         dirname += "BatchNorm_"
     dirname += LP.loss_func + "_"
