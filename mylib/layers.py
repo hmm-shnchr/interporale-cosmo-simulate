@@ -186,10 +186,18 @@ class TanhExp:
         self.x = None
 
     def forward(self, x, is_training):
-        self.x = x
-        return x * np.tanh(np.exp(x))
+        ## return x * np.tanh(np.exp(x)) overflow when x > 709
+        self.x          = x
+        ret_x           = np.zeros_like(x, dtype=x.dtype)
+        mask_1          = x > 700   ## overflow np.exp(710)
+        mask_2          = x <= 700
+        x_1, x_2        = x[mask_1], x[mask_2]
+        ret_x[mask_1]   = x_1 * (1.0 - np.exp(-2.0*x_1)) / (1.0 + np.exp(-2.0*x_1))
+        ret_x[mask_2]   = x_2 * np.tanh(np.exp(x_2))
+        return ret_x
 
     def backward(self, dout):
+        ## TODO Overflow
         return dout * (np.tanh(np.exp(self.x)) - self.x * np.exp(self.x) * (np.tanh(np.exp(self.x))**2 - 1.0))
 
 
