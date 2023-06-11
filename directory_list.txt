@@ -1,2 +1,3 @@
 =====Directories=====
-results/2in_3out/x_vx_Mvir_to_x_10layers_100neurons_BatchNorm_RE_1e-3lr_1000Epoch_Standardization_After_acc_trainMvir1e+8_testMvir1e+7_1/
+results/2in_3out/x_vx_Mvir_to_x_10layers_100neurons_tanhexp_BatchNorm_RE_1e-3lr_1000Epoch_Standardization_After_acc_trainMvir1e+8_testMvir1e+7_1/
+results/2in_3out/x_vx_Mvir_to_x_10layers_100neurons_relu_BatchNorm_RE_1e-3lr_1000Epoch_Standardization_After_acc_trainMvir1e+8_testMvir1e+7_1/
