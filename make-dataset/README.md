@@ -16,7 +16,7 @@ These *input size* and *output size* are defined by ***input_size*** and ***outp
 Format of datasets are defined by ***learn_dataset_format***(Train-Dataset) and ***predict_dataset_format***(Test-Dataset).
 *"shift"* or *""equal_spaced"* can be specified for these valiables. Examples of *"shift"* and *""equal_spaced"* are shown below.
 
-When the format is *"shift"*, data is like $[x_1, x_2, \dots, x_n]$ and (***input_size***, ***output_size***) is (2, 3),  
+When the format is *"shift"*, data is like $[x_1, x_2, \dots, x_n]$ and (***input_size***, ***output_size***) is (2, 3),
 
 $$
   \mathrm{Input} =
@@ -31,11 +31,29 @@ $$
   \begin{bmatrix}
     d_{2} & d_{3} & d_{4} \\
     d_{3} & d_{4} & d_{5} \\
-    \vdots & \vdots \vdots \\
+    \vdots & \vdots & \vdots \\
     d_{n-3} & d_{n-2} & d_{n-1} \\
   \end{bmatrix}
 $$
 
 
 2. *""equal_spaced"*  
-When data is like $[x_1, x_2, \dots, x_n]$ and (***input_size***, ***output_size***) is (2, 3),  
+When data is like $[x_1, x_2, \dots, x_n]$ and (***input_size***, ***output_size***) is (2, 3),
+
+$$
+  \mathrm{Input} =
+  \begin{bmatrix}
+    d_{1} & d_{5} \\
+    d_{5} & d_{9} \\
+    \vdots & \vdots \\
+    d_{n-4} & d_{n}
+  \end{bmatrix}
+  ,
+  \mathrm{Correct} =
+  \begin{bmatrix}
+    d_{2} & d_{3} & d_{4} \\
+    d_{6} & d_{7} & d_{8} \\
+    \vdots & \vdots & \vdots \\
+    d_{n-3} & d_{n-2} & d_{n-1} \\
+  \end{bmatrix}
+$$
