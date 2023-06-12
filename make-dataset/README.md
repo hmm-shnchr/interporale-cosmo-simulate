@@ -17,7 +17,7 @@ Format of datasets are defined by ***learn_dataset_format***(Train-Dataset) and 
 *"shift"* or *""equal_spaced"* can be specified for these valiables. Examples of *"shift"* and *""equal_spaced"* are shown below.
 
 1. *"shift"*  
-When data is like $[x_1, x_2, \dots, x_n]$ and (***input_size***, ***output_size***) is (2, 3), reshape it to
+When data is like $[x_1, x_2, \dots, x_n]$ and (***input_size***, ***output_size***) is (2, 3),  
 $$\mathrm{input\_ data} =
     \begin{bmatrix}
     d_{1} & d_{5} \\
@@ -36,7 +36,7 @@ $$\mathrm{input\_ data} =
   \end{bmatrix}$$
 
 2. *""equal_spaced"*  
-When data is like $[x_1, x_2, \dots, x_n]$ and (***input_size***, ***output_size***) is (2, 3), reshape it to
+When data is like $[x_1, x_2, \dots, x_n]$ and (***input_size***, ***output_size***) is (2, 3),  
 $$\mathrm{input\_ data} =
     \begin{bmatrix}
     d_{1} & d_{5} \\
