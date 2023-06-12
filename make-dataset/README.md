@@ -19,12 +19,10 @@ Format of datasets are defined by ***learn_dataset_format***(Train-Dataset) and 
 <!-- 1. *"shift"*   -->
 When data is like $[x_1, x_2, \dots, x_n]$ and (***input_size***, ***output_size***) is (2, 3),  
 
-$$
+<!-- $$
 {\left\lbrack \matrix{2 & 3 \cr 4 & 5} \right\rbrack}
+$$ -->
 $$
-$$
-\begin{equation}
-  \label{make_array_dataset}
   \mathrm{input\_ data} =
   \begin{bmatrix}
     d_{1} & d_{4} \\
@@ -38,7 +36,6 @@ $$
     d_{5} & d_{6} \\
     d_{8} & d_{9}
   \end{bmatrix}
-\end{equation}
 $$
 
 
