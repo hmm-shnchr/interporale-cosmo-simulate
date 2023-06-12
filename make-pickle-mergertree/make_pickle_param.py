@@ -7,10 +7,10 @@ import sys
 READ_COLS       = 60
 COL_NAMES       = ["ch{0:02d}".format(i) for i in range(READ_COLS)]
 
-BOXSIZE         = 70 ## cosmological N-body simulation's box size(Mpc/h)
-MAINBRANCH_LIST = ["mainbranch_0_0_0.csv"] ## filename to read (change as appropriate)
-RANGE_MIN       = "1e+1"
-RANGE_MAX       = "1e+18"
+BOXSIZE         = 70                        ## cosmological N-body simulation's box size(Mpc/h)
+MAINBRANCH_LIST = ["mainbranch_0_0_0.csv"]  ## filename to read (change as appropriate)
+RANGE_MIN       = "1e+1"                    ## not use Mvir(z=0) < RANGE_MIN
+RANGE_MAX       = "1e+18"                   ## not use Mvir(z=0) > RANGE_MAX
 ## Specify the column number of  parameters to be extract as a list.
 ## See MergerTree about the correspondence between column number and parameter.
 PARAM_IDX_LIST  = [0, 1, 5, 10, 11, 17, 20]
