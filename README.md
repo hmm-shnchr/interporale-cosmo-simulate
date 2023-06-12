@@ -14,5 +14,5 @@ Once the datasets has been created, rewrite [/mylib/learning_parameter.py](/myli
 Then `python prediction.py` to interpolate Test-Dataset with the learned Machine-Learning-Model.<br>
 
 Prepared [sample notebooks](/validate-notebook), which evaluates the learned Machine-Learning-Model compared to Linear, Spline, and Hermite interpolation.
-The sample notebook [/validate-notebook/Plot_compare_methods.ipynb](/validate-notebook/Plot_compare_methods.ipynb) describes a comparison between ReLU and TanhExp for activation function. of the Machine-Learning-Model.
+The sample notebook [/validate-notebook/Plot_compare_methods.ipynb](/validate-notebook/Plot_compare_methods.ipynb) describes a comparison between ReLU and TanhExp for activation function of the Machine-Learning-Model.
 The other sample notebook [/validate-notebook/Plot_scale_vs_data.ipynb](/validate-notebook/Plot_scale_vs_data.ipynb) shows a visualization of the actual interpolated Test-Dataset.
