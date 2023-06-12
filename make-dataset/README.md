@@ -58,3 +58,6 @@ $$
     d_{n-3} & d_{n-2} & d_{n-1} \\
   \end{bmatrix}
 $$
+
+<br>
+Actual format of datas to be interpolated is *"equal_spaced"*, though, it is not a sufficient amount of data for learning, so *"shift"* is recommended for the format of Train-Dataset.
