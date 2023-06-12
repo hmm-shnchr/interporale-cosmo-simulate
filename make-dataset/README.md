@@ -14,7 +14,7 @@ Datasets are 3-dimensional matrix, each dimension is *[parameter, dataset size, 
 These *input size* and *output size* are defined by ***input_size*** and ***output_size***.
 
 Format of datasets are defined by ***learn_dataset_format***(Train-Dataset) and ***predict_dataset_format***(Test-Dataset).
-*"shift"* or *""equal_spaced"* can be specified for these valiables. Examples of *"shift"* and *""equal_spaced"* are shown below.
+*"shift"* or *"equal_spaced"* can be specified for these valiables. Examples of *"shift"* and *""equal_spaced"* are shown below.
 
 1. *"shift"*  
 When data is like $[x_1, x_2, \dots, x_n]$ and (***input_size***, ***output_size***) is (2, 3),
