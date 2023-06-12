@@ -18,22 +18,7 @@ Format of datasets are defined by ***learn_dataset_format***(Train-Dataset) and 
 
 1. *"shift"*  
 When data is like $[x_1, x_2, \dots, x_n]$ and (***input_size***, ***output_size***) is (2, 3),  
-$$input\_ data = \begin{bmatrix} d_{1} & d_{5} \\\\ d_{2} & d_{6} \\\\ d_{3} & d_{7} \\\\ \vdots & \vdots \\\\ d_{n-4} & d_{n} \\\\ \end{bmatrix} ,\, true\_ data = \begin{bmatrix} d_{2} & d_{3} & d_{4} \\\\ d_{3} & d_{4} & d_{5} \\\\ \vdots & \vdots & \vdots \\\\ d_{n-3} & d_{n-2} & d_{n-1} \\\\ \end{bmatrix}$$
+$$ A = \begin{bmatrix} 1 & 2 \\\\ 3 & 4 \end{bmatrix} $$
 
 2. *""equal_spaced"*  
 When data is like $[x_1, x_2, \dots, x_n]$ and (***input_size***, ***output_size***) is (2, 3),  
-$$\mathrm{input\_ data} =
-    \begin{bmatrix}
-    d_{1} & d_{5} \\
-    d_{5} & d_{8} \\
-    \vdots & \vdots \\
-    d_{n-4} & d_{n} \\
-  \end{bmatrix}
-  ,\,
-  \mathrm{true\_ data} =
-  \begin{bmatrix}
-    d_{2} & d_{3} & d_{4} \\
-    d_{6} & d_{6} & d_{7} \\
-    \vdots & \vdots & \vdots \\
-    d_{n-3} & d_{n-2} & d_{n-1} \\
-  \end{bmatrix}$$
