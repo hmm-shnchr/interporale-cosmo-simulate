@@ -16,7 +16,8 @@ These *input size* and *output size* are defined by ***input_size*** and ***outp
 Format of datasets are defined by ***learn_dataset_format***(Train-Dataset) and ***predict_dataset_format***(Test-Dataset).
 *"shift"* or *""equal_spaced"* can be specified for these valiables. Examples of *"shift"* and *""equal_spaced"* are shown below.
 
-When the format is *"shift"*, data is like $[x_1, x_2, \dots, x_n]$ and (***input_size***, ***output_size***) is (2, 3),
+1. *"shift"*
+When data is like $[x_1, x_2, \dots, x_n]$ and (***input_size***, ***output_size***) is (2, 3),
 
 $$
   \mathrm{Input} =
