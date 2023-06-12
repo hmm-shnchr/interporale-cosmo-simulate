@@ -23,14 +23,14 @@ When data is like $[x_1, x_2, \dots, x_n]$ and (***input_size***, ***output_size
 {\left\lbrack \matrix{2 & 3 \cr 4 & 5} \right\rbrack}
 $$ -->
 $$
-  \mathrm{input\_ data} =
+  \mathrm{input_data} =
   \begin{bmatrix}
     d_{1} & d_{4} \\
     d_{4} & d_{7} \\
     d_{7} & d_{10}
   \end{bmatrix}
-  ,\,
-  \mathrm{true\_ data} =
+  ,
+  \mathrm{true_data} =
   \begin{bmatrix}
     d_{2} & d_{3} \\
     d_{5} & d_{6} \\
