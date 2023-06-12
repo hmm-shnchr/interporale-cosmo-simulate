@@ -20,8 +20,7 @@ Format of datasets are defined by ***learn_dataset_format***(Train-Dataset) and 
 When data is like $[x_1, x_2, \dots, x_n]$ and (***input_size***, ***output_size***) is (2, 3),  
 
 $$
-{\left\lbrack \matrix{2 & 3 \cr 4 & 5} \right\rbrack}* \left\lbrack \matrix{1 & 0 \cr 0 & 1} \right\rbrack
-= \left\lbrack \matrix{2 & 3 \cr 4 & 5} \right\rbrack
+{\left\lbrack \matrix{2 & 3 \cr 4 & 5} \right\rbrack}
 $$
 
 
