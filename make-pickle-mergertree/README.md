@@ -10,8 +10,8 @@ Note: Match name and column-index of parameters to MergerTree.
 3. Specify a mass-range of extract haro with ***RANGE_MIN*** and ***RANGE_MAX***.
 4. `python extract_mainbranch.py` and mainbranches of the MergerTree are saved in .csv format.
 
-[make_pickle_param.py](/make-pickle-mergertree/make_pickle_param.py) extracts and molds specified parameters from mainbranches of hosthalo and subhalo and save them as **host_param.pickle** and **sub_halo.pickle**.  
-Change each variables **BOXSIZE**, **MAINBRANCH_LIST**, **RANGE_MIN**, **RANGE_MAX**, **PARAM_IDX_LIST**, **PARAM_NAME_LIST** as appropriate.
+[make_pickle_param.py](/make-pickle-mergertree/make_pickle_param.py) extracts and molds specified parameters from mainbranches of hosthalo and subhalo and save them as *host_param.pickle* and *sub_halo.pickle*.  
+Change each variables ***BOXSIZE***, ***MAINBRANCH_LIST***, ***RANGE_MIN***, ***RANGE_MAX***, ***PARAM_IDX_LIST***, ***PARAM_NAME_LIST*** as appropriate.
 
 The [host_param.pickle](/make-pickle-mergertree/sample-params/host_param.pickle)'s data-struct is *{"file_name":{"parameter_name":ndrray(1-dim)}}*.  
 Key *"filename"* is defined by the filename of the file from which extracted mainbranches(In the [sample-params](/make-pickle-mergertree/sample-params), mainbranch_0_0_0.csv).  
