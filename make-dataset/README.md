@@ -22,6 +22,24 @@ When data is like $[x_1, x_2, \dots, x_n]$ and (***input_size***, ***output_size
 $$
 {\left\lbrack \matrix{2 & 3 \cr 4 & 5} \right\rbrack}
 $$
+$$
+\begin{equation}
+  \label{make_array_dataset}
+  \mathrm{input\_ data} =
+  \begin{bmatrix}
+    d_{1} & d_{4} \\
+    d_{4} & d_{7} \\
+    d_{7} & d_{10}
+  \end{bmatrix}
+  ,\,
+  \mathrm{true\_ data} =
+  \begin{bmatrix}
+    d_{2} & d_{3} \\
+    d_{5} & d_{6} \\
+    d_{8} & d_{9}
+  \end{bmatrix}
+\end{equation}
+$$
 
 
 <!-- 2. *""equal_spaced"*   -->
