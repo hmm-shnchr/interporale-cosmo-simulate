@@ -7,3 +7,5 @@ Prepared [sample datas](/make-pickle-mergertree/sample-params) in this repositor
 These sample datas are used to train Machine-Learning-Model.
 A method for making datasets from MergerTree(.tree) is described in [/make-pickle-mergertree/README.md](/make-pickle-mergertree/README.md). and [/make-dataset/README.md](/make-dataset/README.md) <br>
 
+Once the datasets has benn created, run a following command to train Machie-Learning-Model.
+`python main.py`
