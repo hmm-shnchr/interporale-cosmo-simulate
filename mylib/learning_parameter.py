@@ -22,6 +22,32 @@ class LearnParam:
     Describe learning parameter of a MachineLearningModel.
     If you want to change some learning parameter,
     rewrite those instance variables.
+
+    Parameter
+    ----------
+    THRESHOLD: float
+        Split dataset by this threshold.
+        Model[0] learns dataset below this threshold.
+        Model[1] learns dataset above this threshold.
+
+    EPS: float
+        Prevent division by 0.
+
+    accuracy_test: bool
+        Whether to print Accuracy-Value for Test-Dataset every epoch.
+
+    accuracy_batch: bool
+        Whether to print Accuracy-Value for Minibatch every epoch.
+
+    TRAIN_MVIR_THRESHOLD: string
+        Use halos with Mvir(z=0) greater than this value for Train-Dataset
+
+    TEST_MVIR_THRESHOLD: string
+        Use halos with Mvir(z=0) greater than this value for Test-Dataset
+
+    use_param_input: list
+        
+
     """
 
     def __init__(self):
@@ -43,7 +69,7 @@ class LearnParam:
         self.batch_normalization        = True
         self.batch_normalization_output = False
         self.loss_func                  = "RE"
-        self.activation_func            = "relu"
+        self.activation_func            = "tanhexp"
         self.weight_init                = "he"
         self.lastlayer_identity         = True
         self.EPOCH                      = 1000
